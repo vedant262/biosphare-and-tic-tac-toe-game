@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biosphere - Earth's Living Systems</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            color: #333;
+            transition: all 0.5s ease;
+        }
+
+        /* Background gradients for different sections */
+        body.intro { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        body.ecosystems { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        body.conservation { background: linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%); }
+        body.games { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+
+        .page {
+            display: none;
+            min-height: 100vh;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .page.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        h1 {
+            font-size: 3.5em;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            color: #f0f0f0;
+            font-weight: 300;
+        }
+
+        .content {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            flex-grow: 1;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            color: #4a5568;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+        }
+
+        .intro .section h2 { border-bottom: 3px solid #667eea; }
+        .ecosystems .section h2 { border-bottom: 3px solid #11998e; }
+        .conservation .section h2 { border-bottom: 3px solid #fc4a1a; }
+
+        .section h3 {
+            color: #2d3748;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+        }
+
+        .section p {
+            line-height: 1.8;
+            color: #4a5568;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .highlight-box {
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .intro .highlight-box { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .ecosystems .highlight-box { background: linear-gradient(135deg, #11998e, #38ef7d); }
+        .conservation .highlight-box { background: linear-gradient(135deg, #fc4a1a, #f7b733); }
+
+        .warning-box {
+            background: linear-gradient(135deg, #e53e3e, #fc8181);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .features-grid, .ecosystem-grid, .solution-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .feature-card, .ecosystem-card, .solution-card {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .intro .feature-card { border-left: 5px solid #667eea; }
+        .ecosystems .ecosystem-card { border-left: 5px solid #11998e; }
+        .conservation .solution-card { border-left: 5px solid #fc4a1a; }
+
+        .feature-card:hover, .ecosystem-card:hover, .solution-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .feature-card h4, .ecosystem-card h4, .solution-card h4 {
+            color: #2d3748;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .food-chain {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 30px 0;
+            padding: 25px;
+            background: #edf2f7;
+            border-radius: 15px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .organism {
+            background: #11998e;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .arrow {
+            font-size: 1.5em;
+            color: #11998e;
+            font-weight: bold;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 30px 0;
+            padding: 25px;
+            background: #edf2f7;
+            border-radius: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #fc4a1a;
+            display: block;
+        }
+
+        .stat-label {
+            color: #4a5568;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .action-list {
+            background: #e6fffa;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #38b2ac;
+            margin: 25px 0;
+        }
+
+        .action-list h4 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .action-list ul {
+            list-style: none;
+        }
+
+        .action-list li {
+            padding: 8px 0;
+            color: #4a5568;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .action-list li:before {
+            content: "✓";
+            color: #38b2ac;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        /* Game styles */
+        .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: fadeInUp 1s ease-out;
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .game-status {
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            color: #4a5568;
+            font-weight: 600;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 10px;
+            margin: 30px auto;
+            max-width: 300px;
+            aspect-ratio: 1;
+        }
+
+        .cell {
+            background: #f7fafc;
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 90px;
+        }
+
+        .cell:hover {
+            background: #e2e8f0;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .cell.x { color: #e53e3e; }
+        .cell.o { color: #3182ce; }
+
+        .cell.winning {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            animation: pulse 1s infinite;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 20px;
+            background: #edf2f7;
+            border-radius: 15px;
+        }
+
+        .score-item {
+            text-align: center;
+        }
+
+        .score-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .score-label {
+            color: #4a5568;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .game-info {
+            background: #e6fffa;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 5px solid #38b2ac;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .game-info h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .game-info p {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .navigation.center {
+            justify-content: center;
+        }
+
+        .nav-button {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            cursor: pointer;
+            border: none;
+            margin: 5px;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        .nav-button.intro { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .nav-button.ecosystems { background: linear-gradient(135deg, #11998e, #38ef7d); }
+        .nav-button.conservation { background: linear-gradient(135deg, #fc4a1a, #f7b733); }
+        .nav-button.games { background: linear-gradient(135deg, #667eea, #764ba2); }
+
+        .nav-button.intro:hover { background: linear-gradient(135deg, #764ba2, #667eea); }
+        .nav-button.ecosystems:hover { background: linear-gradient(135deg, #38ef7d, #11998e); }
+        .nav-button.conservation:hover { background: linear-gradient(135deg, #f7b733, #fc4a1a); }
+        .nav-button.games:hover { background: linear-gradient(135deg, #764ba2, #667eea); }
+
+        .reset-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            margin: 5px;
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, #764ba2, #667eea);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5em;
+            }
+            .content, .game-container {
+                padding: 25px;
+            }
+            .features-grid, .ecosystem-grid, .solution-grid {
+                grid-template-columns: 1fr;
+            }
+            .navigation {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .food-chain {
+                flex-direction: column;
+            }
+            .arrow {
+                transform: rotate(90deg);
+            }
+            .stats-container {
+                flex-direction: column;
+            }
+            .cell {
+                font-size: 2em;
+                min-height: 70px;
+            }
+            .game-board {
+                max-width: 250px;
+            }
+        }
+    </style>
+</head>
+<body class="intro">
+    <!-- Introduction Page -->
+    <div id="intro" class="page active intro">
+        <div class="container">
+            <header>
+                <h1>The Biosphere</h1>
+                <p class="subtitle">Earth's Living Envelope</p>
+            </header>
+
+            <div class="content">
+                <div class="section">
+                    <h2>What is the Biosphere?</h2>
+                    <p>The biosphere is the global ecological system integrating all living beings and their relationships, including their interaction with the elements of the lithosphere (Earth's crust), hydrosphere (water systems), and atmosphere (air and gases). It is the zone of life on Earth, where all known life forms exist.</p>
+                    
+                    <div class="highlight-box">
+                        <h3>🌍 Key Fact</h3>
+                        <p>The biosphere extends from about 11 kilometers below sea level to 15 kilometers above sea level, encompassing the deepest ocean trenches to the highest mountain peaks where life can survive.</p>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Components of the Biosphere</h2>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <h4>🌊 Hydrosphere</h4>
+                            <p>All water bodies on Earth including oceans, rivers, lakes, and groundwater. Water is essential for all life forms and serves as a medium for biological processes.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>🌍 Lithosphere</h4>
+                            <p>The solid outer shell of Earth, including soil and rocks. It provides the foundation and nutrients necessary for terrestrial life.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>🌬️ Atmosphere</h4>
+                            <p>The layer of gases surrounding Earth. It provides oxygen for respiration, carbon dioxide for photosynthesis, and protection from harmful radiation.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Characteristics of Life in the Biosphere</h2>
+                    <h3>Biodiversity</h3>
+                    <p>The biosphere hosts an incredible diversity of life forms, from microscopic bacteria to massive blue whales. Scientists estimate there are between 8-100 million species on Earth, though only about 1.5 million have been formally described.</p>
+
+                    <h3>Energy Flow</h3>
+                    <p>Life in the biosphere depends on energy flow, primarily from the Sun. Plants capture solar energy through photosynthesis, converting it into chemical energy that flows through food chains and ecosystems.</p>
+
+                    <h3>Nutrient Cycling</h3>
+                    <p>Essential elements like carbon, nitrogen, phosphorus, and water are continuously recycled through the biosphere, ensuring the sustainability of life processes.</p>
+                </div>
+
+                <div class="navigation center">
+                    <button class="nav-button ecosystems" onclick="showPage('ecosystems')">Next: Ecosystems & Habitats →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ecosystems Page -->
+    <div id="ecosystems" class="page ecosystems">
+        <div class="container">
+            <header>
+                <h1>Ecosystems & Habitats</h1>
+                <p class="subtitle">Life's Interconnected Communities</p>
+            </header>
+
+            <div class="content">
+                <div class="section">
+                    <h2>Understanding Ecosystems</h2>
+                    <p>An ecosystem is a community of living organisms interacting with each other and their physical environment. These complex networks of relationships form the foundation of life in the biosphere, where energy flows and nutrients cycle continuously.</p>
+                    
+                    <div class="highlight-box">
+                        <h3>🌿 Ecosystem Balance</h3>
+                        <p>Healthy ecosystems maintain a delicate balance through predator-prey relationships, competition, and symbiosis. When this balance is disrupted, it can have cascading effects throughout the entire system.</p>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Major Biomes of Earth</h2>
+                    <div class="ecosystem-grid">
+                        <div class="ecosystem-card">
+                            <h4>🏔️ Tundra</h4>
+                            <p>Cold, treeless regions with permafrost. Home to caribou, arctic foxes, and unique plant adaptations to extreme cold and short growing seasons.</p>
+                        </div>
+                        <div class="ecosystem-card">
+                            <h4>🌲 Boreal Forest</h4>
+                            <p>Coniferous forests with spruce, fir, and pine trees. Supports wildlife like bears, wolves, and migratory birds across northern regions.</p>
+                        </div>
+                        <div class="ecosystem-card">
+                            <h4>🌳 Temperate Forest</h4>
+                            <p>Deciduous and mixed forests with distinct seasons. Rich biodiversity including deer, squirrels, and countless bird species.</p>
+                        </div>
+                        <div class="ecosystem-card">
+                            <h4>🌾 Grasslands</h4>
+                            <p>Prairie and savanna ecosystems dominated by grasses. Support large herbivores like bison, zebras, and their predators.</p>
+                        </div>
+                        <div class="ecosystem-card">
+                            <h4>🏜️ Desert</h4>
+                            <p>Arid regions with specialized organisms adapted to water scarcity. Cacti, camels, and reptiles thrive in extreme conditions.</p>
+                        </div>
+                        <div class="ecosystem-card">
+                            <h4>🌴 Tropical Rainforest</h4>
+                            <p>The most biodiverse ecosystems on Earth. Dense canopy layers support millions of species in complex food webs.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Food Chains and Energy Flow</h2>
+                    <p>Energy flows through ecosystems in a unidirectional manner, from producers to consumers. Each step in this chain represents a trophic level, with energy being lost as heat at each transfer.</p>
+                    
+                    <div class="food-chain">
+                        <div class="organism">☀️ Sun</div>
+                        <div class="arrow">→</div>
+                        <div class="organism">🌱 Producers</div>
+                        <div class="arrow">→</div>
+                        <div class="organism">🐰 Primary Consumers</div>
+                        <div class="arrow">→</div>
+                        <div class="organism">🐺 Secondary Consumers</div>
+                        <div class="arrow">→</div>
+                        <div class="organism">🦅 Tertiary Consumers</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Aquatic Ecosystems</h2>
+                    <h3>Marine Ecosystems</h3>
+                    <p>Ocean ecosystems cover over 70% of Earth's surface and contain unique communities from surface plankton to deep-sea creatures. Coral reefs, kelp forests, and open ocean environments each support distinct life forms.</p>
+
+                    <h3>Freshwater Ecosystems</h3>
+                    <p>Rivers, lakes, and wetlands provide crucial habitats for countless species. These ecosystems are vital for water purification, flood control, and supporting both aquatic and terrestrial life.</p>
+                </div>
+
+                <div class="navigation">
+                    <button class="nav-button intro" onclick="showPage('intro')">← Previous: Introduction</button>
+                    <button class="nav-button conservation" onclick="showPage('conservation')">Next: Human Impact →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conservation Page -->
+    <div id="conservation" class="page conservation">
+        <div class="container">
+            <header>
+                <h1>Human Impact & Conservation</h1>
+                <p class="subtitle">Protecting Earth's Living Systems</p>
+            </header>
+
+            <div class="content">
+                <div class="section">
+                    <h2>Human Impact on the Biosphere</h2>
+                    <p>Human activities have dramatically altered the biosphere over the past few centuries. Our growing population and technological advancement have led to unprecedented changes in Earth's living systems, affecting biodiversity, climate, and ecosystem functioning.</p>
+                    
+                    <div class="warning-box">
+                        <h3>⚠️ Critical Statistics</h3>
+                        <p>Scientists estimate that current species extinction rates are 100-1000 times higher than natural background rates, primarily due to human activities. This has led many to classify our current era as the sixth mass extinction event.</p>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Major Environmental Challenges</h2>
+                    <div class="stats-container">
+                        <div class="stat-item">
+                            <span class="stat-number">30%</span>
+                            <div class="stat-label">of Earth's land degraded</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">1M</span>
+                            <div class="stat-label">species at risk of extinction</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">80%</span>
+                            <div class="stat-label">of forests lost or degraded</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">50%</span>
+                            <div class="stat-label">of wetlands destroyed</div>
+                        </div>
+                    </div>
+
+                    <h3>Climate Change</h3>
+                    <p>Rising global temperatures due to greenhouse gas emissions are causing widespread changes in weather patterns, sea levels, and ecosystem distributions. This affects species migration, breeding cycles, and food availability.</p>
+
+                    <h3>Habitat Destruction</h3>
+                    <p>Deforestation, urbanization, and agricultural expansion have resulted in massive habitat loss. Many species are losing their homes faster than they can adapt or migrate to new areas.</p>
+
+                    <h3>Pollution</h3>
+                    <p>Chemical pollutants, plastic waste, and toxic substances contaminate air, water, and soil, affecting the health of organisms throughout the food chain.</p>
+                </div>
+
+                <div class="section">
+                    <h2>Conservation Solutions</h2>
+                    <div class="solution-grid">
+                        <div class="solution-card">
+                            <h4>🌳 Protected Areas</h4>
+                            <p>Establishing national parks, wildlife reserves, and marine protected areas to preserve critical habitats and biodiversity hotspots.</p>
+                        </div>
+                        <div class="solution-card">
+                            <h4>♻️ Sustainable Practices</h4>
+                            <p>Promoting renewable energy, sustainable agriculture, and circular economy principles to reduce environmental impact.</p>
+                        </div>
+                        <div class="solution-card">
+                            <h4>🔬 Scientific Research</h4>
+                            <p>Advancing our understanding of ecosystems through research and monitoring to inform conservation strategies.</p>
+                        </div>
+                        <div class="solution-card">
+                            <h4>📚 Education & Awareness</h4>
+                            <p>Teaching communities about environmental stewardship and the importance of biodiversity conservation.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Individual Actions You Can Take</h2>
+                    <div class="action-list">
+                        <h4>🌱 Make a Difference</h4>
+                        <ul>
+                            <li>Reduce energy consumption by using LED bulbs and efficient appliances</li>
+                            <li>Choose sustainable transportation options like cycling or public transit</li>
+                            <li>Support eco-friendly products and companies</li>
+                            <li>Reduce, reuse, and recycle materials whenever possible</li>
+                            <li>Plant native species in your garden to support local wildlife</li>
+                            <li>Participate in local conservation and cleanup efforts</li>
+                            <li>Educate others about environmental issues and solutions</li>
+                            <li>Support organizations working on conservation projects</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Success Stories</h2>
+                    <div class="highlight-box">
+                        <h3>🐋 Conservation Wins</h3>
+                        <p>The recovery of humpback whale populations from near extinction to over 80,000 individuals demonstrates that dedicated conservation efforts can succeed. Similarly, the establishment of the ozone layer protection protocols has helped heal the atmospheric damage caused by industrial chemicals.</p>
+                    </div>
+                </div>
+
+                <div class="navigation">
+                    <button class="nav-button ecosystems" onclick="showPage('ecosystems')">← Previous: Ecosystems</button>
+                    <button class="nav-button games" onclick="showPage('games')">Next: Interactive Games →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Games Page -->
+    <div id="games" class="page games">
+        <div class="container">
+            <header>
+                <h1>🎮 Biosphere Games</h1>
+                <p class="subtitle">Tic Tac Toe Challenge</p>
+            </header>
+
+            <div class="game-container">
+                <div class="game-status" id="gameStatus">Player X's Turn</div>
+                
+                <div class="score-board">
+                    <div class="score-item">
+                        <div class="score-number" id="scoreX">0</div>
+                        <div class="score-label">Player X</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-number" id="scoreTies">0</div>
+                        <div class="score-label">Ties</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-number" id="scoreO">0</div>
+                        <div class="score-label">Player O</div>
+                    </div>
+                </div>
+
+                <div class="game-board" id="gameBoard">
+                    <div class="cell" data-index="0"></div>
+                    <div class="cell" data-index="1"></div>
+                    <div class="cell" data-index="2"></div>
+                    <div class="cell" data-index="3"></div>
+                    <div class="cell" data-index="4"></div>
+                    <div class="cell" data-index="5"></div>
+                    <div class="cell" data-index="6"></div>
+                    <div class="cell" data-index="7"></div>
+                    <div class="cell" data-index="8"></div>
+                </div>
+
+                <div class="controls">
+                    <button class="reset-btn" onclick="resetGame()">New Game</button>
+                    <button class="reset-btn" onclick="resetScores()">Reset Scores</button>
+                </div>
+
+                <div class="game-info">
+                    <h3>🎯 How to Play</h3>
+                    <p>• Players take turns placing X's and O's on the 3x3 grid</p>
+                    <p>• First player to get 3 in a row (horizontal, vertical, or diagonal) wins</p>
+                    <p>• If all 9 squares are filled with no winner, it's a tie</p>
+                    <p>• Player X always goes first</p>
+                </div>
+
+                <div class="navigation center">
+                    <button class="nav-button conservation" onclick="showPage('conservation')">← Back to Conservation</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Page navigation
+        function showPage(pageId) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Change body class for background
+            document.body.className = pageId;
+            
+            // Reset game when switching to games page
+            if (pageId === 'games') {
+                resetGame();
+            }
+        }
+
+        // Tic Tac Toe Game Logic
+        let currentPlayer = 'X';
+        let gameBoard = ['', '', '', '', '', '', '', '', ''];
+        let gameActive = true;
+        let scores = { X: 0, O: 0, ties: 0 };
+
+        const winningConditions = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ];
+
+        // Initialize game when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                cell.addEventListener('click', handleCellClick);
+            });
+            updateScoreDisplay();
+        });
+
+        function handleCellClick(e) {
+            const cellIndex = parseInt(e.target.getAttribute('data-index'));
+
+            if (gameBoard[cellIndex] !== '' || !gameActive) {
+                return;
+            }
+
+            gameBoard[cellIndex] = currentPlayer;
+            e.target.textContent = currentPlayer;
+            e.target.classList.add(currentPlayer.toLowerCase());
+
+            checkResult();
+        }
+
+        function checkResult() {
+            const gameStatusDisplay = document.getElementById('gameStatus');
+            const cells = document.querySelectorAll('.cell');
+            let roundWon = false;
+            let winningCells = [];
+
+            for (let i = 0; i < winningConditions.length; i++) {
+                const [a, b, c] = winningConditions[i];
+                if (gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c]) {
+                    roundWon = true;
+                    winningCells = [a, b, c];
+                    break;
+                }
+            }
+
+            if (roundWon) {
+                gameStatusDisplay.textContent = `Player ${currentPlayer} Wins! 🎉`;
+                gameActive = false;
+                scores[currentPlayer]++;
+                updateScoreDisplay();
+                highlightWinningCells(winningCells);
+                return;
+            }
+
+            const roundDraw = !gameBoard.includes('');
+            if (roundDraw) {
+                gameStatusDisplay.textContent = "It's a Tie! 🤝";
+                gameActive = false;
+                scores.ties++;
+                updateScoreDisplay();
+                return;
+            }
+
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            gameStatusDisplay.textContent = `Player ${currentPlayer}'s Turn`;
+        }
+
+        function highlightWinningCells(winningCells) {
+            const cells = document.querySelectorAll('.cell');
+            winningCells.forEach(index => {
+                cells[index].classList.add('winning');
+            });
+        }
+
+        function resetGame() {
+            currentPlayer = 'X';
+            gameBoard = ['', '', '', '', '', '', '', '', ''];
+            gameActive = true;
+            
+            const gameStatusDisplay = document.getElementById('gameStatus');
+            if (gameStatusDisplay) {
+                gameStatusDisplay.textContent = "Player X's Turn";
+            }
+
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.className = 'cell';
+            });
+        }
+
+        function resetScores() {
+            scores = { X: 0, O: 0, ties: 0 };
+            updateScoreDisplay();
+        }
+
+        function updateScoreDisplay() {
+            const scoreX = document.getElementById('scoreX');
+            const scoreO = document.getElementById('scoreO');
+            const scoreTies = document.getElementById('scoreTies');
+            
+            if (scoreX) scoreX.textContent = scores.X;
+            if (scoreO) scoreO.textContent = scores.O;
+            if (scoreTies) scoreTies.textContent = scores.ties;
+        }
+    </script>
+</body>
+</html>
